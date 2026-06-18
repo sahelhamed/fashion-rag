@@ -35,4 +35,3 @@ for item in items:
     )
 
 print("✅ Database created!")
-print(collection.get())
