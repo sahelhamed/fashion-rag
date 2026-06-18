@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "type": "top",
+    "color": "white",
+    "style": "basic t-shirt"
+  },
+  {
+    "id": 2,
+    "type": "skirt",
+    "color": "blue",
+    "style": "denim skirt"
+  },
+  {
+    "id": 3,
+    "type": "shoes",
+    "color": "black",
+    "style": "sneakers"
+  }
+]
