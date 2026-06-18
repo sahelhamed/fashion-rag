@@ -2,13 +2,13 @@ import os
 from sentence_transformers import SentenceTransformer
 import chromadb
 
-# مدل Embedding
+# مدل embedding
 model = SentenceTransformer("all-MiniLM-L6-v2")
 
 # اتصال به Chroma
 client = chromadb.PersistentClient(path="chroma_db")
 
-# حذف کالکشن قبلی
+# اگر قبلاً ساخته شده حذفش کن
 try:
     client.delete_collection("clothes")
 except:
@@ -29,6 +29,7 @@ for file in os.listdir(image_folder):
         .replace("_", " ")
     )
 
+    # تشخیص دسته از اسم فایل
     category = "unknown"
 
     if "skirt" in file.lower():
@@ -41,12 +42,6 @@ for file in os.listdir(image_folder):
         category = "shirt"
 
     elif "shoes" in file.lower():
-        category = "shoes"
-
-    elif "boots" in file.lower():
-        category = "shoes"
-
-    elif "sneakers" in file.lower():
         category = "shoes"
 
     embedding = model.encode(text).tolist()
