@@ -2,7 +2,14 @@ from db import get_collection
 
 collection = get_collection()
 
-selected = input("Select item: ")
+all_items = collection.get()
+
+print("\nAvailable items:\n")
+
+for item in all_items["ids"]:
+    print("-", item)
+
+selected = input("\nSelect item: ")
 
 # پیدا کردن آیتم انتخاب شده
 selected_item = collection.get(ids=[selected])

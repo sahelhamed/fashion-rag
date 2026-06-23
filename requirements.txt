@@ -1,0 +1,5 @@
+transformers
+torch
+pillow
+chromadb
+hf_xet
