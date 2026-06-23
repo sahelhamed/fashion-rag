@@ -30,6 +30,8 @@ for file in os.listdir(image_folder):
             "category": get_category(file)
         })
 
+collection.delete()  # 🔥 پاک کردن دیتابیس قبلی (خیلی مهم)
+
 for item in items:
     embedding = model.encode(item["text"]).tolist()
 

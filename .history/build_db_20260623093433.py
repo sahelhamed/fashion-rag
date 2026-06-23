@@ -1,9 +1,8 @@
 import os
 from sentence_transformers import SentenceTransformer
 from db import reset_collection
-
 model = SentenceTransformer("all-MiniLM-L6-v2")
-collection = reset_collection()
+collection = get_collection()
 
 image_folder = "images"
 
@@ -29,6 +28,8 @@ for file in os.listdir(image_folder):
             "text": text,
             "category": get_category(file)
         })
+
+collection.delete()  # 🔥 پاک کردن دیتابیس قبلی (خیلی مهم)
 
 for item in items:
     embedding = model.encode(item["text"]).tolist()
