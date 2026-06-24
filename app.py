@@ -1,22 +1,24 @@
-from db.chroma_client import get_collection
-from services.stylist import suggest_outfit
+from services.embedder import (
+    text_to_vector
+)
 
-collection = get_collection()
+from services.search import (
+    search_by_vector
+)
 
-selected = input("Select item: ")
+query = input(
+    "Search: "
+)
 
-item = collection.get(ids=[selected])
+vector = text_to_vector(
+    query
+)
 
-if not item["ids"]:
-    print("Item not found!")
-    exit()
+results = search_by_vector(
+    vector
+)
 
-meta = item["metadatas"][0]
-category = meta.get("category", "unknown")
+print("\nResults:\n")
 
-print("\nDetected category:", category)
-
-print("\nSelected:")
-print("-", selected)
-
-suggest_outfit(category)
+for item in results["ids"][0]:
+    print("-", item)
