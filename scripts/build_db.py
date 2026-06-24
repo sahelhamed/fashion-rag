@@ -1,49 +1,67 @@
 import os
-from config import IMAGE_FOLDER
-from db.chroma_client import get_collection
-from services.embedder import image_to_vector
+from PIL import Image
+
+from db.chroma_client import (
+    get_collection
+)
+
+from services.embedder import (
+    get_image_embedding
+)
+
+from services.classifier import (
+    classify_image
+)
 
 collection = get_collection()
 
-def get_category(filename):
-    name = filename.lower()
+image_folder = "images"
 
-    if "shoe" in name or "boot" in name or "sneaker" in name:
-        return "shoes"
-    elif "skirt" in name or "pants" in name:
-        return "bottom"
-    elif "shirt" in name or "top" in name:
-        return "top"
-    else:
-        return "unknown"
+for file in os.listdir(
+    image_folder
+):
 
-
-# reset DB (safe)
-try:
-    collection.delete()
-except:
-    pass
-
-count = 0
-
-for file in os.listdir(IMAGE_FOLDER):
-    if not file.lower().endswith((".jpg", ".png", ".jpeg")):
+    if not file.lower().endswith(
+        (
+            ".jpg",
+            ".jpeg",
+            ".png"
+        )
+    ):
         continue
 
-    path = os.path.join(IMAGE_FOLDER, file)
+    img_path = os.path.join(
+        image_folder,
+        file
+    )
 
-    vector = image_to_vector(path)
-    category = get_category(file)
+    image = Image.open(
+        img_path
+    ).convert("RGB")
+
+    category = classify_image(
+        image
+    )
+
+    embedding = get_image_embedding(
+        img_path
+    )
 
     collection.add(
         ids=[file],
-        embeddings=[vector],
+        embeddings=[embedding],
         documents=[file],
-        metadatas=[{"category": category}]
+        metadatas=[
+            {
+                "category": category
+            }
+        ]
     )
 
-    print("Added:", file)
-    count += 1
+    print(
+        f"Added: {file} -> {category}"
+    )
 
-print("\nDB built successfully")
-print("Items:", count)
+print(
+    "\nDB build completed"
+)
