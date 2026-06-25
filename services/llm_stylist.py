@@ -1,14 +1,9 @@
 import os
+import requests
 
 from dotenv import load_dotenv
-from openai import OpenAI
 
 load_dotenv()
-
-client = OpenAI(
-    api_key=os.getenv("ARVAN_API_KEY"),
-    base_url=os.getenv("ARVAN_BASE_URL")
-)
 
 
 def generate_style_advice(
@@ -32,7 +27,6 @@ Available items:
 {items_text}
 
 Create:
-
 1. Recommended outfit
 2. Why it works
 3. Styling tips
@@ -40,21 +34,32 @@ Create:
 Keep answer concise.
 """
 
-    response = client.chat.completions.create(
-        model="DeepSeek-V3.1",
-        messages=[
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
-        temperature=0.7,
-        max_tokens=500
+    response = requests.post(
+        f"{os.getenv('ARVAN_BASE_URL')}/chat/completions",
+        headers={
+            "Authorization": f"apikey {os.getenv('ARVAN_API_KEY')}",
+            "Content-Type": "application/json"
+        },
+        json={
+            "model": "DeepSeek-V3.1",
+            "messages": [
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            "temperature": 0.7,
+            "max_tokens": 500
+        }
     )
 
+    print("STATUS:", response.status_code)
+    print("RESPONSE:", response.text)
+
+    response.raise_for_status()
+
     return (
-        response
-        .choices[0]
-        .message
-        .content
+        response.json()
+        ["choices"][0]
+        ["message"]["content"]
     )
