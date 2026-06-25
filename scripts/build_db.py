@@ -1,67 +1,51 @@
 import os
-from PIL import Image
 
-from db.chroma_client import (
-    get_collection
-)
+from db.chroma_client import get_collection
 
 from services.embedder import (
-    get_image_embedding
+    image_to_vector
 )
 
-from services.classifier import (
-    classify_image
+from services.captioner import (
+    generate_caption
 )
 
 collection = get_collection()
 
 image_folder = "images"
 
-for file in os.listdir(
-    image_folder
-):
+for img_name in os.listdir(image_folder):
 
-    if not file.lower().endswith(
-        (
-            ".jpg",
-            ".jpeg",
-            ".png"
-        )
+    if not img_name.lower().endswith(
+        (".jpg", ".jpeg", ".png")
     ):
         continue
 
-    img_path = os.path.join(
+    image_path = os.path.join(
         image_folder,
-        file
+        img_name
     )
 
-    image = Image.open(
-        img_path
-    ).convert("RGB")
-
-    category = classify_image(
-        image
+    embedding = image_to_vector(
+        image_path
     )
 
-    embedding = get_image_embedding(
-        img_path
+    caption = generate_caption(
+        image_path
     )
 
     collection.add(
-        ids=[file],
+        ids=[img_name],
         embeddings=[embedding],
-        documents=[file],
+        documents=[caption],
         metadatas=[
             {
-                "category": category
+                "file": img_name
             }
         ]
     )
 
-    print(
-        f"Added: {file} -> {category}"
-    )
+    print(f"Added: {img_name}")
+    print(f"Caption: {caption}")
 
-print(
-    "\nDB build completed"
-)
+print("\nDB build completed.")

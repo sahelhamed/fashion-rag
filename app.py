@@ -1,21 +1,13 @@
-from services.embedder import (
-    text_to_vector
-)
-
 from services.search import (
-    search_by_vector
+    search_by_text
 )
 
 query = input(
     "Search: "
 )
 
-vector = text_to_vector(
+results = search_by_text(
     query
-)
-
-results = search_by_vector(
-    vector
 )
 
 print("\nResults:\n")
